@@ -1,8 +1,12 @@
 set nocompatible
 syntax enable
 filetype plugin on
+filetype indent on    " required
 
 set runtimepath^=~/.vim/bundle/yaml-vim/autoload
+
+set cursorline
+botright cwindow
 
 set ls=2
 python3 from powerline.vim import setup as powerline_setup
@@ -54,13 +58,19 @@ map <leader>rf :execute "!pytest %"
 autocmd BufWritePre *.py :%s/\s\+$//eg
 
 " "Insert a python breakpoint in the line above
-noremap <leader>b Oimport pdb;pdb.set_trace()<ESC>
+noremap <leader>db Oimport pdb;pdb.set_trace()<ESC>
 
 " "offer tags for word under cursor
 map <leader>ts :ts <C-r><C-w><CR>
 
 " "run ctags on current folder
 command! MakeTags !ctags -R --exclude=bamboo* --exclude=*.pyc --exclude=*.orig --exclude=make_base .
+command! LibTags !find `"$VIRTUAL_ENV/bin/python" -c "import distutils; print(distutils.sysconfig.get_python_lib())"` -name \*.py | ctags -L- --append
+
+
+" "python comment/uncomment
+vnoremap ,c :s/^/# /<CR>:noh<CR>
+vnoremap ,C :s/\(^\)# /\1/<CR>:noh<CR>
 
 let python_highlight_all=1
 syntax on
@@ -79,51 +89,51 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 " " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-" " All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
 
 
 Plugin 'tmhedberg/SimpylFold'
-" "Do not fold at opening files
-set foldlevel=99
-
 Plugin 'vim-scripts/indentpython.vim'
 Bundle 'Valloric/YouCompleteMe'
-
-let g:ycm_autoclose_preview_window_after_completion=1
-
 Plugin 'vim-syntastic/syntastic'
+" "Some color schemas
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'sonph/onehalf', {'rtp': 'vim/'}
 
-if has('gui_running')
-  set background=dark
-  colorscheme solarized
-else
-  colorscheme zenburn
-endif
-
+" "New syntax file for python to enhace colorschema
+" " Plugin 'kh3phr3n/python-syntax'
 Plugin 'scrooloose/nerdtree'
 
-" "nerdtree configs
-let NERDTreeIgnore=['\.pyc$', '\~$', 'bamboo*[[dir]]', '\.orig$', 'make-base[[dir]]', 'make_base[[dir]]'] "ignore files in NERDTree
-silent! nmap <C-b> :NERDTreeToggle<CR>
-silent! map <F3> :NERDTreeFind<CR>
+Plugin 'bennyyip/vim-yapf'
+" "RST plugin
+Plugin 'Rykka/riv.vim'
 
+" " All of your Plugins must be added before the following line
+call vundle#end()            " required
+
+" "SimpylFold Do not fold at opening files
+set foldlevel=99
+
+" "YouCompleteMe
+let g:ycm_autoclose_preview_window_after_completion=1
 
 " "syntastic configs
-let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 1
 let g:syntastic_aggregate_errors=1
 let g:syntastic_python_checkers = ["flake8", "python"]
+let g:syntastic_ignore_files = ['.Envs/*']
+" "colorcheme
+colorscheme onehalfdark
+let g:airline_theme='onehalfdark'
 
+" "fix tmux colors
+set background=dark
+set t_Co=256
 
-Plugin 'bennyyip/vim-yapf'
-
-" "TODO:
-" " *Buscar como desactivar este feature on demand, por ahi es medio tedioso
-" " *mapear el :w para que trimee espacios !!!!
-
+" "nerdtree configs
+let NERDTreeIgnore=['\.pyc$', '\~$', 'bamboo*[[dir]]', '\.orig$', 'make-base[[dir]]', 'make_base[[dir]]'] "ignore files in NERDTree
+silent! nmap <C-a> :NERDTreeToggle<CR>
+silent! map <F3> :NERDTreeFind<CR>
