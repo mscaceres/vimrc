@@ -24,7 +24,7 @@ set scrolloff=4
 set incsearch
 set showmatch
 set hlsearch
-set colorcolumn=110
+set colorcolumn=100
 
 set splitbelow
 set splitright
@@ -61,7 +61,7 @@ autocmd BufWritePre *.py :%s/\s\+$//eg
 noremap <leader>db Oimport pdb;pdb.set_trace()<ESC>
 
 " "offer tags for word under cursor
-map <leader>ts :ts <C-r><C-w><CR>
+map <leader>ts :tjump <C-r><C-w><CR>
 
 " "run ctags on current folder
 command! MakeTags !ctags -R --exclude=bamboo* --exclude=*.pyc --exclude=*.orig --exclude=make_base .
@@ -69,8 +69,14 @@ command! LibTags !find `"$VIRTUAL_ENV/bin/python" -c "import distutils; print(di
 
 
 " "python comment/uncomment
-vnoremap ,c :s/^/# /<CR>:noh<CR>
-vnoremap ,C :s/\(^\)# /\1/<CR>:noh<CR>
+vnoremap <leader>c :s/^/# /<CR>:noh<CR>
+vnoremap <leader>C :s/\(^\)# /\1/<CR>:noh<CR>
+
+" "replace word under cursor with single qoutes
+noremap <leader>q dei''<Esc>P
+
+" "replace visual selection with single qoutes
+vnoremap <leader>q di''<Esc>P
 
 let python_highlight_all=1
 syntax on
@@ -89,24 +95,24 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 " " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-
-
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'vim-scripts/indentpython.vim'
-Bundle 'Valloric/YouCompleteMe'
 Plugin 'vim-syntastic/syntastic'
 " "Some color schemas
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'sonph/onehalf', {'rtp': 'vim/'}
-
-" "New syntax file for python to enhace colorschema
-" " Plugin 'kh3phr3n/python-syntax'
+Plugin 'patstockwell/vim-monokai-tasty'
 Plugin 'scrooloose/nerdtree'
 
 Plugin 'bennyyip/vim-yapf'
 " "RST plugin
 Plugin 'Rykka/riv.vim'
+
+Plugin 'sheerun/vim-polyglot'
+Plugin 'b4b4r07/vim-hcl'
+
+Plugin 'davidhalter/jedi-vim'
 
 " " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -125,6 +131,7 @@ let g:syntastic_check_on_wq = 1
 let g:syntastic_aggregate_errors=1
 let g:syntastic_python_checkers = ["flake8", "python"]
 let g:syntastic_ignore_files = ['.Envs/*']
+
 " "colorcheme
 colorscheme onehalfdark
 let g:airline_theme='onehalfdark'
